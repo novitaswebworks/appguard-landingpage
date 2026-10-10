@@ -4,20 +4,36 @@ export const SITE = {
   name: "AppGuard",
   domain: "appguard.novitasweb.works",
   url: "https://appguard.novitasweb.works",
-  tagline: "Biometric App Lock & Privacy Vault for macOS",
+  tagline: "Biometric App Lock & Privacy Vault for macOS, Windows & Linux",
   description:
-    "Instant Touch ID biometric protection for macOS applications, AES-256 encrypted folder vault, sleep-lock defense, and zero-telemetry local security.",
+    "Cross-platform biometric app locking and hardware-accelerated AES-256 encrypted privacy vault. Native Touch ID, Windows Hello, and Linux PAM security with zero cloud telemetry.",
   github: "https://github.com/novitaswebworks/appguard",
   githubReleases: "https://github.com/novitaswebworks/appguard/releases",
   author: "Novitas Web Works",
 } as const;
 
+const releaseBase = `${SITE.githubReleases}/download/v${VERSION}`;
+
 export const DOWNLOADS = {
-  universalDmg: {
-    label: "macOS (Universal DMG)",
+  macos: {
+    label: "macOS (Universal)",
     file: `AppGuard_${VERSION}_universal.dmg`,
-    arch: "Apple Silicon (M1/M2/M3/M4) & Intel",
-    url: `${SITE.githubReleases}/download/v${VERSION}/AppGuard_${VERSION}_universal.dmg`,
+    arch: "Apple Silicon & Intel · macOS 12+",
+    url: `${releaseBase}/AppGuard_${VERSION}_universal.dmg`,
+    available: true,
+  },
+  windows: {
+    label: "Windows (x64)",
+    file: `AppGuard_${VERSION}_x64-setup.exe`,
+    arch: "Windows 10 / 11 · 64-bit",
+    url: `${releaseBase}/AppGuard_${VERSION}_x64-setup.exe`,
+    available: true,
+  },
+  linux: {
+    label: "Linux (AppImage & .deb)",
+    file: `AppGuard_${VERSION}_amd64.AppImage`,
+    arch: "x86_64 · Ubuntu, Fedora, Arch",
+    url: `${releaseBase}/AppGuard_${VERSION}_amd64.AppImage`,
     available: true,
   },
   homebrew: {

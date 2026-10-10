@@ -7,11 +7,22 @@ export default function HomePage() {
   const [paused, setPaused] = useState(false);
   const [nodesActive, setNodesActive] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<"macos" | "windows" | "linux">("macos");
 
   const heroPhotoRef = useRef<HTMLImageElement>(null);
   const heroCopyRef = useRef<HTMLDivElement>(null);
   const heroRunwayRef = useRef<HTMLDivElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
+
+  // Auto-detect OS on client mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const ua = window.navigator.userAgent.toLowerCase();
+      if (ua.includes("win")) setSelectedPlatform("windows");
+      else if (ua.includes("linux")) setSelectedPlatform("linux");
+      else setSelectedPlatform("macos");
+    }
+  }, []);
 
   // Initialize soundwave bars
   useEffect(() => {
@@ -98,19 +109,25 @@ export default function HomePage() {
     alert("Copied to clipboard: brew install --cask novitaswebworks/tap/appguard");
   };
 
-  const triggerDownload = () => {
+  const triggerDownload = (os: "macos" | "windows" | "linux" = selectedPlatform) => {
     setDialogOpen(false);
-    alert(`AppGuard v${VERSION} universal installer downloaded.`);
+    const filenames = {
+      macos: `AppGuard_${VERSION}_universal.dmg`,
+      windows: `AppGuard_${VERSION}_x64-setup.exe`,
+      linux: `AppGuard_${VERSION}_amd64.AppImage`,
+    };
+    alert(`AppGuard v${VERSION} (${filenames[os]}) download initiated.`);
   };
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: "AppGuard",
-    description: "Instant Touch ID biometric protection for macOS applications, AES-256 encrypted folder vault, sleep-lock defense, and zero-telemetry local security.",
+    description:
+      "Cross-platform biometric app locking and hardware-accelerated AES-256 encrypted privacy vault for macOS, Windows, and Linux with zero cloud telemetry.",
     applicationCategory: "SecurityApplication",
     applicationSubCategory: "Privacy & Biometric Access Control",
-    operatingSystem: "macOS 12.0+",
+    operatingSystem: "macOS 12.0+, Windows 10/11, Linux (X11 & Wayland)",
     softwareVersion: VERSION,
     downloadUrl: `${SITE.githubReleases}/download/v${VERSION}/AppGuard_${VERSION}_universal.dmg`,
     url: SITE.url,
@@ -126,14 +143,15 @@ export default function HomePage() {
       url: "https://novitasweb.works",
     },
     featureList: [
-      "Per-App Touch ID Biometric Gate",
-      "Apple Secure Enclave Hardware Integration",
+      "Cross-Platform Biometric App Intercept",
+      "Touch ID & Apple Watch Integration (macOS)",
+      "Windows Hello Facial & Fingerprint Auth (Windows 10/11)",
+      "Linux PAM & fprintd Biometrics (X11 & Wayland)",
       "AES-256 Hardware Encrypted Folder Vault",
-      "Lock-on-Sleep and Screensaver Detection",
+      "Lock-on-Sleep and Idle Session Security",
       "Tamper-Resistant Background Watchdog Daemon",
       "SHA-256 Salted Master PIN Fallback",
       "Zero Cloud Telemetry Guarantee",
-      "Native Apple Silicon (ARM64) & Intel Builds",
     ],
   };
 
@@ -164,7 +182,7 @@ export default function HomePage() {
           <a href="#stats">Benchmarks</a>
           <a href="#visibility">Biometric Demo</a>
           <a href="#matrix">Capabilities</a>
-          <a href="#platforms">Downloads</a>
+          <a href="#platforms">Platforms</a>
           <a href="#faq">FAQ</a>
         </nav>
         <button className="pill" onClick={() => setDialogOpen(true)}>
@@ -175,7 +193,7 @@ export default function HomePage() {
       <main id="top">
         {/* Hero Section */}
         <div className="hero-runway" ref={heroRunwayRef}>
-          <section className="hero" aria-label="AppGuard biometric lock and privacy vault for macOS">
+          <section className="hero" aria-label="AppGuard biometric lock and privacy vault for macOS, Windows and Linux">
             <img
               ref={heroPhotoRef}
               className="hero-photo"
@@ -186,7 +204,7 @@ export default function HomePage() {
             <div className="wash"></div>
             <div className="hero-copy" ref={heroCopyRef}>
               <div className="eyebrow">
-                <span className="dot dot-live"></span> BIOMETRIC PRIVACY FOR MACOS
+                <span className="dot dot-live"></span> CROSS-PLATFORM DESKTOP PRIVACY
               </div>
               <h1>
                 Lock tight.
@@ -194,8 +212,8 @@ export default function HomePage() {
                 <em>Move freely.</em>
               </h1>
               <p>
-                Instant Touch ID protection for sensitive macOS applications, military-grade encrypted
-                folder vaults, and instant stealth privacy when you step away.
+                Instant biometric gating for your desktop applications, hardware-accelerated AES-256
+                folder cloaking, and seamless stealth protection across macOS, Windows, and Linux.
               </p>
               <div className="actions">
                 <a className="pill solid" href="#solutions">
@@ -208,14 +226,14 @@ export default function HomePage() {
             </div>
             <div className="hero-bottom">
               <p>
-                LOCAL SECURE ENCLAVE.
+                CROSS-PLATFORM BIOMETRICS.
                 <br />
-                AES-256 ENCRYPTED VAULT.
+                AES-256 HARDWARE VAULT.
                 <br />↓ SCROLL TO EXPLORE
               </p>
               <div className="signal">
                 <div>
-                  <span>TOUCH ID / ACTIVE ENGINE</span>
+                  <span>AUTH SENSOR / ACTIVE ENGINE</span>
                   <span className="dot dot-live"></span>
                 </div>
                 <div className="wave" ref={waveRef} aria-hidden="true"></div>
@@ -231,17 +249,17 @@ export default function HomePage() {
         <section className="section" id="solutions">
           <div className="intro">
             <div className="reveal">
-              <span className="eyebrow">01 / APPGUARD CORE PILLARS</span>
+              <span className="eyebrow">01 / APPGUARD DEFENSE MATRIX</span>
               <h2>
-                Total privacy.
-                <br />
-                <em>Zero friction.</em>
+                Total privacy.<br />
+                <em>Across every OS.</em>
               </h2>
             </div>
             <p className="reveal">
-              Built natively in Rust and Tauri with macOS LocalAuthentication and kernel-level event
-              monitoring. AppGuard shields your conversations, source code, credentials, and confidential
-              files behind biometric gates.
+              Engineered natively in Rust and Tauri with direct hooks into macOS LocalAuthentication,
+              Windows Hello UserConsentVerifier, and Linux PAM. AppGuard shields your workspace apps,
+              source repositories, private credentials, and personal chats behind instant hardware-backed
+              biometric verification before unauthorized windows can ever render.
             </p>
           </div>
 
@@ -250,24 +268,24 @@ export default function HomePage() {
               <b>01 / APP SHIELD</b>
               <h3>Per-App Biometric Gate.</h3>
               <p>
-                Gate Telegram, WhatsApp, Terminal, Xcode, or any app behind Touch ID or Master PIN fallback
-                before windows render.
+                Lock Telegram, WhatsApp, Terminal, Discord, IDEs, or any native application behind Touch ID,
+                Windows Hello, Linux PAM, or Master PIN fallback before windows draw.
               </p>
             </article>
             <article className="reveal">
               <b>02 / ENCRYPTED VAULT</b>
               <h3>AES-256 Folder Cloaking.</h3>
               <p>
-                Encrypt confidential directories, SSH keys, and client documents with hardware-accelerated
-                AES-GCM cryptography.
+                Encrypt confidential repositories, SSH keys, credentials, and client documents with
+                hardware-accelerated AES-GCM cryptography. Fully encrypted at rest.
               </p>
             </article>
             <article className="reveal">
               <b>03 / STEALTH &amp; SLEEP</b>
               <h3>Instant Auto-Arming.</h3>
               <p>
-                Locks apps immediately upon display sleep, screensaver activation, or custom zero-click grace
-                timeout windows.
+                Arm your workstation the millisecond your laptop lid closes, display sleeps, screensaver
+                activates, or customizable zero-click inactivity grace timers expire.
               </p>
             </article>
           </div>
@@ -283,12 +301,12 @@ export default function HomePage() {
               <div className="lbl">RAM Footprint</div>
             </div>
             <div className="stat-card">
-              <div className="val">0% Cloud</div>
-              <div className="lbl">Zero Telemetry · Airgapped</div>
+              <div className="val">3 Platforms</div>
+              <div className="lbl">macOS · Windows · Linux</div>
             </div>
             <div className="stat-card">
-              <div className="val">AES-GCM</div>
-              <div className="lbl">Hardware Cryptography</div>
+              <div className="val">0% Cloud</div>
+              <div className="lbl">Zero Telemetry · Airgapped</div>
             </div>
           </div>
         </section>
@@ -298,17 +316,16 @@ export default function HomePage() {
           <div className="reveal">
             <span className="eyebrow">02 / INTERACTIVE BIOMETRIC SIMULATION</span>
             <h2>
-              One touch.
-              <br />
+              One touch.<br />
               <em>Instant verification.</em>
             </h2>
           </div>
           <div className="console reveal">
             <div>
-              <h3>TOUCH ID → SECURE ENCLAVE → VAULT UNLOCKED</h3>
+              <h3>BIOMETRIC SENSOR → HARDWARE ENCLAVE → VAULT UNLOCKED</h3>
               <p id="demo-status" role="status">
                 {nodesActive
-                  ? "Touch ID verified → Secure Enclave validated → Protected apps unlocked. Session active."
+                  ? "Sensor handshake verified → Hardware keystore validated → Protected apps unlocked. Session active."
                   : "System idle · Awaiting biometric handshake or PIN passkey."}
               </p>
               <button
@@ -316,18 +333,18 @@ export default function HomePage() {
                 id="demo"
                 onClick={() => setNodesActive((prev) => !prev)}
               >
-                Simulate Touch ID Auth ↗
+                Simulate Biometric Auth ↗
               </button>
               <p style={{ marginTop: "12px", fontSize: "11px" }}>
-                Local Secure Enclave emulation · No telemetry recorded
+                Touch ID / Windows Hello / PAM emulation · No telemetry recorded
               </p>
             </div>
             <div
               className={`nodes ${nodesActive ? "on" : ""}`}
               aria-label="AppGuard biometric verification flow"
             >
-              <span>TOUCH ID</span>
-              <span>ENCLAVE</span>
+              <span>AUTH</span>
+              <span>KEYSTORE</span>
               <span>UNLOCKED</span>
             </div>
           </div>
@@ -338,9 +355,8 @@ export default function HomePage() {
           <div className="reveal">
             <span className="eyebrow">03 / BUILT IN. NO SUBSCRIPTION REQUIRED.</span>
             <h2>
-              Engineered for power users.
-              <br />
-              <em>Crafted for macOS.</em>
+              Engineered for power users.<br />
+              <em>Native across desktop OSes.</em>
             </h2>
             <p style={{ color: "var(--muted)", maxWidth: "540px", marginTop: "10px" }}>
               Every tool you need to protect client code, trade secrets, sensitive chats, and personal files
@@ -350,11 +366,11 @@ export default function HomePage() {
 
           <div className="feature-grid reveal">
             <div className="feature-card">
-              <span className="f-tag">LOCAL AUTH</span>
-              <h3>Touch ID &amp; Apple Watch</h3>
+              <span className="f-tag">MULTI-BIOMETRIC</span>
+              <h3>Touch ID, Hello &amp; PAM</h3>
               <p>
-                Authenticates against the Apple Secure Enclave coprocessor in under 5 milliseconds with native
-                system dialogs.
+                Native hardware support: Apple Secure Enclave Touch ID, Windows Hello facial &amp; fingerprint
+                sensors, and Linux fprintd / PAM credential prompts.
               </p>
             </div>
             <div className="feature-card">
@@ -362,31 +378,31 @@ export default function HomePage() {
               <h3>Hardware AES-256 Vault</h3>
               <p>
                 Military-grade AES-GCM encryption cloaks sensitive folders until authorized. Files remain
-                completely encrypted at rest.
+                completely encrypted at rest across all file systems.
               </p>
             </div>
             <div className="feature-card">
               <span className="f-tag">BACKGROUND</span>
-              <h3>Tamper-Proof Daemon</h3>
+              <h3>Tamper-Proof Watchdog</h3>
               <p>
-                Runs as a persistent background daemon with watchdog recovery to prevent unauthorized process
-                termination.
+                Runs as a persistent background daemon with automatic recovery hooks (launchd, Windows Service,
+                systemd) to prevent unauthorized process termination.
               </p>
             </div>
             <div className="feature-card">
               <span className="f-tag">PRIVACY</span>
-              <h3>Lock-on-Sleep</h3>
+              <h3>Lock-on-Sleep &amp; Screensaver</h3>
               <p>
-                Monitors macOS IOKit power events to arm protection immediately the millisecond your MacBook
-                lid closes or screensaver starts.
+                Monitors OS power and session events to lock applications immediately the millisecond your machine
+                sleeps or your screensaver engages.
               </p>
             </div>
             <div className="feature-card">
               <span className="f-tag">FAILSAFE</span>
               <h3>Master PIN Fallback</h3>
               <p>
-                SHA-256 salted PIN safeguard ensures you never lose access when clamshell mode is active or
-                Touch ID is temporarily unavailable.
+                SHA-256 salted PIN safeguard ensures you never lose access when external displays are connected
+                or biometrics are temporarily unavailable.
               </p>
             </div>
             <div className="feature-card">
@@ -432,8 +448,7 @@ export default function HomePage() {
           <div className="reveal">
             <span className="eyebrow">05 / PRIVACY GUARANTEE</span>
             <h2>
-              Your machine.
-              <br />
+              Your machine.<br />
               <em>Your sovereignty.</em>
             </h2>
             <p>
@@ -454,45 +469,88 @@ export default function HomePage() {
           <div className="reveal">
             <span className="eyebrow">06 / INSTALLATION &amp; BUILDS</span>
             <h2>
-              Available today.
-              <br />
-              <em>Universal macOS binaries.</em>
+              Available today.<br />
+              <em>Universal desktop support.</em>
             </h2>
           </div>
           <div className="platform-matrix reveal">
             <div className="platform-card">
-              <b>Apple Silicon</b>
-              <span className="badge">Recommended</span>
+              <b>macOS</b>
+              <span className="badge">Universal Binary</span>
               <p>
-                Optimized for M1, M2, M3, and M4 chips with native ARM64 instructions and Secure Enclave
-                acceleration.
+                Native ARM64 &amp; Intel x86_64 build for macOS 12+ (Monterey, Ventura, Sonoma, Sequoia) with
+                Touch ID &amp; Apple Watch verification.
               </p>
-              <button className="card-action" onClick={() => setDialogOpen(true)}>
-                Download for Apple Silicon ↗
+              <button
+                className="card-action"
+                onClick={() => {
+                  setSelectedPlatform("macos");
+                  setDialogOpen(true);
+                }}
+              >
+                Download for macOS (.dmg) ↗
               </button>
             </div>
             <div className="platform-card">
-              <b>Intel x86_64</b>
-              <span className="badge">Universal</span>
+              <b>Windows</b>
+              <span className="badge">64-bit Installer</span>
               <p>
-                Full support for Intel-based MacBooks, iMacs, and Mac Minis with T2 Security Chip Touch ID
-                integration.
+                Full Windows 10 &amp; 11 support with Windows Hello facial recognition, fingerprint sensor,
+                and Credential Manager integration.
               </p>
-              <button className="card-action" onClick={() => setDialogOpen(true)}>
-                Download for Intel Mac ↗
+              <button
+                className="card-action"
+                onClick={() => {
+                  setSelectedPlatform("windows");
+                  setDialogOpen(true);
+                }}
+              >
+                Download for Windows (.exe) ↗
               </button>
             </div>
             <div className="platform-card">
-              <b>Homebrew Tap</b>
-              <span className="badge">CLI Package</span>
+              <b>Linux</b>
+              <span className="badge">AppImage &amp; .deb</span>
               <p>
-                Install and update automatically via your terminal with a single command:{" "}
-                <code style={{ fontSize: "11px", wordBreak: "break-all" }}>brew install --cask novitaswebworks/tap/appguard</code>.
+                Compatible with Ubuntu, Debian, Fedora, Arch &amp; all major distros across X11 and Wayland
+                with PAM &amp; fprintd authentication.
               </p>
-              <button className="card-action" onClick={copyBrew}>
-                Copy Brew Command ↗
+              <button
+                className="card-action"
+                onClick={() => {
+                  setSelectedPlatform("linux");
+                  setDialogOpen(true);
+                }}
+              >
+                Download for Linux (.AppImage) ↗
               </button>
             </div>
+          </div>
+
+          <div
+            className="reveal"
+            style={{
+              marginTop: "30px",
+              padding: "24px 28px",
+              border: "1px solid var(--line)",
+              borderRadius: "18px",
+              background: "rgba(255,255,255,0.45)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "16px",
+            }}
+          >
+            <div>
+              <b style={{ fontSize: "14px", fontFamily: "Georgia, serif" }}>Prefer Homebrew on macOS?</b>
+              <p style={{ margin: "4px 0 0", fontSize: "12px", color: "var(--muted)", fontFamily: "monospace" }}>
+                brew install --cask novitaswebworks/tap/appguard
+              </p>
+            </div>
+            <button className="card-action" onClick={copyBrew}>
+              Copy Brew Command ↗
+            </button>
           </div>
         </section>
 
@@ -503,8 +561,7 @@ export default function HomePage() {
               07 / FREQUENTLY ASKED QUESTIONS
             </span>
             <h2>
-              Clear answers.
-              <br />
+              Clear answers.<br />
               <em>No surprises.</em>
             </h2>
           </div>
@@ -513,45 +570,39 @@ export default function HomePage() {
             style={{ maxWidth: "820px", marginLeft: "auto", marginRight: "auto" }}
           >
             <details className="faq-item">
-              <summary className="faq-summary">How does AppGuard intercept apps before they open?</summary>
+              <summary className="faq-summary">Which operating systems are supported by AppGuard?</summary>
               <div className="faq-body">
-                AppGuard leverages native macOS accessibility and workspace notification APIs (NSWorkspace)
-                combined with a high-performance Rust daemon to intercept window activations in under 5ms,
-                displaying the biometric challenge before any sensitive screen content is drawn.
+                AppGuard is fully cross-platform. It runs natively on <strong>macOS</strong> (Apple Silicon M1/M2/M3/M4 &amp; Intel), <strong>Windows 10/11</strong> (64-bit), and <strong>Linux</strong> (Ubuntu, Debian, Fedora, Arch, with support for both X11 and Wayland desktop environments).
+              </div>
+            </details>
+            <details className="faq-item">
+              <summary className="faq-summary">How does AppGuard intercept applications before they open?</summary>
+              <div className="faq-body">
+                AppGuard leverages native platform windowing and workspace notification APIs—NSWorkspace on macOS, Win32 Foreground Hooks on Windows, and xdotool / D-Bus on Linux—combined with a high-performance Rust daemon to intercept window activations in under 5ms, displaying the biometric challenge before sensitive screen content renders.
+              </div>
+            </details>
+            <details className="faq-item">
+              <summary className="faq-summary">Which biometric authentication methods are supported?</summary>
+              <div className="faq-body">
+                On macOS, AppGuard uses Touch ID and Apple Watch via LocalAuthentication. On Windows, it integrates with Windows Hello (fingerprint, facial recognition, and PIN) via UserConsentVerifier. On Linux, it supports PAM and fprintd. A salted SHA-256 Master PIN fallback is always available across all platforms.
               </div>
             </details>
             <details className="faq-item">
               <summary className="faq-summary">Does AppGuard send any data or keys to the cloud?</summary>
               <div className="faq-body">
-                Never. AppGuard is strictly local-first and airgapped by design. It makes zero external network
-                requests, contains no analytics SDKs, and stores your encrypted vault keys exclusively inside
-                your local keychain and encrypted app state.
+                Never. AppGuard is strictly local-first and airgapped by design. It makes zero external network requests, contains no analytics SDKs, and stores your encrypted vault keys exclusively inside your local OS credential store (macOS Keychain, Windows Credential Manager, Linux Secret Service).
               </div>
             </details>
             <details className="faq-item">
-              <summary className="faq-summary">
-                What happens if Touch ID fails or my Mac is in clamshell mode?
-              </summary>
+              <summary className="faq-summary">Can someone bypass AppGuard by force-quitting the app in Task Manager or Activity Monitor?</summary>
               <div className="faq-body">
-                You can instantly authenticate using your encrypted Master PIN fallback or your macOS system
-                passcode. You will never be locked out of your workstation.
-              </div>
-            </details>
-            <details className="faq-item">
-              <summary className="faq-summary">
-                Can someone bypass AppGuard by force-quitting the app in Activity Monitor?
-              </summary>
-              <div className="faq-body">
-                AppGuard features built-in tamper protection. The core daemon runs as a privileged system
-                helper with auto-restart hooks, and locked applications are immediately hidden or terminated if
-                the security daemon is interrupted.
+                AppGuard features built-in tamper protection. The core watchdog daemon integrates with system-level supervisor hooks (launchd KeepAlive on macOS, Windows Service AutoRestart, and systemd on Linux). If the daemon is interrupted, locked applications are immediately minimized, cloaked, or terminated.
               </div>
             </details>
             <details className="faq-item">
               <summary className="faq-summary">Is AppGuard a subscription or one-time purchase?</summary>
               <div className="faq-body">
-                AppGuard is free and open-source with no recurring subscription tiers. Download the binary,
-                install it to /Applications, and enjoy lifetime protection.
+                AppGuard is free and open-source with no recurring subscription tiers. Download the binary for your operating system, install it, and enjoy lifetime protection.
               </div>
             </details>
           </div>
@@ -563,12 +614,11 @@ export default function HomePage() {
             GET STARTED IN SECONDS
           </span>
           <h2>
-            Protect your
-            <br />
+            Protect your<br />
             private horizon.
           </h2>
           <p>
-            Download AppGuard for macOS. One click to install, effortless biometric privacy that runs
+            Download AppGuard for macOS, Windows, or Linux. Effortless biometric privacy that runs
             whisper-quiet in the background.
           </p>
           <button className="pill solid" onClick={() => setDialogOpen(true)}>
@@ -582,7 +632,7 @@ export default function HomePage() {
         <a className="brand" href="#top">
           APPGUARD /
         </a>
-        <span>Private, hardware-backed macOS application locking and encrypted vault</span>
+        <span>Private, cross-platform biometric application locking and encrypted vault</span>
         <button
           className="motion-btn"
           id="pause"
@@ -618,25 +668,84 @@ export default function HomePage() {
           >
             ×
           </button>
-          <h2>Get AppGuard for macOS</h2>
+          <h2>Get AppGuard for Desktop</h2>
           <p>
-            Experience effortless biometric app protection and encrypted folders on macOS Monterey,
-            Ventura, Sonoma &amp; Sequoia.
+            Experience effortless biometric app protection and encrypted folders on macOS, Windows, and Linux.
           </p>
+
+          <div style={{ display: "flex", gap: "8px", margin: "16px 0 12px" }}>
+            <button
+              style={{
+                flex: 1,
+                padding: "8px 12px",
+                borderRadius: "100px",
+                border: selectedPlatform === "macos" ? "1px solid var(--ink)" : "1px solid var(--line)",
+                background: selectedPlatform === "macos" ? "var(--ink)" : "transparent",
+                color: selectedPlatform === "macos" ? "var(--ivory)" : "var(--ink)",
+                fontSize: "12px",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+              onClick={() => setSelectedPlatform("macos")}
+            >
+              macOS
+            </button>
+            <button
+              style={{
+                flex: 1,
+                padding: "8px 12px",
+                borderRadius: "100px",
+                border: selectedPlatform === "windows" ? "1px solid var(--ink)" : "1px solid var(--line)",
+                background: selectedPlatform === "windows" ? "var(--ink)" : "transparent",
+                color: selectedPlatform === "windows" ? "var(--ivory)" : "var(--ink)",
+                fontSize: "12px",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+              onClick={() => setSelectedPlatform("windows")}
+            >
+              Windows
+            </button>
+            <button
+              style={{
+                flex: 1,
+                padding: "8px 12px",
+                borderRadius: "100px",
+                border: selectedPlatform === "linux" ? "1px solid var(--ink)" : "1px solid var(--line)",
+                background: selectedPlatform === "linux" ? "var(--ink)" : "transparent",
+                color: selectedPlatform === "linux" ? "var(--ivory)" : "var(--ink)",
+                fontSize: "12px",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+              onClick={() => setSelectedPlatform("linux")}
+            >
+              Linux
+            </button>
+          </div>
+
           <div className="dialog-meta">
-            <strong>Version:</strong> AppGuard {VERSION} (Universal Binary)
+            <strong>Version:</strong> AppGuard {VERSION}
             <br />
-            <strong>Architecture:</strong> Apple Silicon (M1/M2/M3/M4) &amp; Intel x86_64
+            <strong>Target:</strong>{" "}
+            {selectedPlatform === "macos"
+              ? "Apple Silicon & Intel (Universal DMG)"
+              : selectedPlatform === "windows"
+              ? "Windows 10 / 11 (64-bit NSIS Setup)"
+              : "Linux (AppImage / .deb x86_64)"}
             <br />
-            <strong>Package:</strong> AppGuard_{VERSION}_universal.dmg
+            <strong>Package:</strong>{" "}
+            {selectedPlatform === "macos"
+              ? `AppGuard_${VERSION}_universal.dmg`
+              : selectedPlatform === "windows"
+              ? `AppGuard_${VERSION}_x64-setup.exe`
+              : `AppGuard_${VERSION}_amd64.AppImage`}
             <br />
-            <strong>Requires:</strong> macOS 12.0+ with Touch ID or System Passcode
-            <br />
-            <strong>Privacy:</strong> 100% Local-First · Zero Cloud Telemetry
+            <strong>Security:</strong> Touch ID, Windows Hello &amp; PAM · 100% Local-First
           </div>
           <div className="dialog-actions">
-            <button className="pill solid" onClick={triggerDownload}>
-              Download DMG (Universal) ↗
+            <button className="pill solid" onClick={() => triggerDownload(selectedPlatform)}>
+              Download for {selectedPlatform === "macos" ? "macOS (.dmg)" : selectedPlatform === "windows" ? "Windows (.exe)" : "Linux (.AppImage)"} ↗
             </button>
             <button className="text-link" onClick={() => setDialogOpen(false)}>
               Dismiss
