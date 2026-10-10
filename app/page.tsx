@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { SITE, VERSION } from "@/lib/site";
 
 export default function HomePage() {
   const [paused, setPaused] = useState(false);
@@ -99,7 +100,7 @@ export default function HomePage() {
 
   const triggerDownload = () => {
     setDialogOpen(false);
-    alert("AppGuard v0.4.0 universal installer downloaded.");
+    alert(`AppGuard v${VERSION} universal installer downloaded.`);
   };
 
   const jsonLd = {
@@ -110,10 +111,10 @@ export default function HomePage() {
     applicationCategory: "SecurityApplication",
     applicationSubCategory: "Privacy & Biometric Access Control",
     operatingSystem: "macOS 12.0+",
-    softwareVersion: "0.4.0",
-    downloadUrl: "https://github.com/novitaswebworks/appguard/releases",
-    url: "https://appguard.novitasweb.works",
-    screenshot: "https://appguard.novitasweb.works/assets/hero.webp",
+    softwareVersion: VERSION,
+    downloadUrl: `${SITE.githubReleases}/download/v${VERSION}/AppGuard_${VERSION}_universal.dmg`,
+    url: SITE.url,
+    screenshot: `${SITE.url}/assets/hero.webp`,
     offers: {
       "@type": "Offer",
       price: "0",
@@ -156,7 +157,7 @@ export default function HomePage() {
       {/* Navigation */}
       <header className="nav">
         <a className="brand" href="#top">
-          APPGUARD<span> /</span> <span className="brand-badge">v0.4.0</span>
+          APPGUARD<span> /</span> <span className="brand-badge">v{VERSION}</span>
         </a>
         <nav aria-label="Main navigation">
           <a href="#solutions">Features</a>
@@ -571,7 +572,7 @@ export default function HomePage() {
             whisper-quiet in the background.
           </p>
           <button className="pill solid" onClick={() => setDialogOpen(true)}>
-            Download AppGuard v0.4.0 ↗
+            Download AppGuard v{VERSION} ↗
           </button>
         </section>
       </main>
@@ -623,11 +624,11 @@ export default function HomePage() {
             Ventura, Sonoma &amp; Sequoia.
           </p>
           <div className="dialog-meta">
-            <strong>Version:</strong> AppGuard 0.4.0 (Universal Binary)
+            <strong>Version:</strong> AppGuard {VERSION} (Universal Binary)
             <br />
             <strong>Architecture:</strong> Apple Silicon (M1/M2/M3/M4) &amp; Intel x86_64
             <br />
-            <strong>Sha256:</strong> e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+            <strong>Package:</strong> AppGuard_{VERSION}_universal.dmg
             <br />
             <strong>Requires:</strong> macOS 12.0+ with Touch ID or System Passcode
             <br />
