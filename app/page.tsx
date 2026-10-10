@@ -94,8 +94,8 @@ export default function HomePage() {
   };
 
   const copyBrew = () => {
-    navigator.clipboard.writeText("brew install appguard");
-    alert("Copied to clipboard: brew install appguard");
+    navigator.clipboard.writeText("brew install --cask novitaswebworks/tap/appguard");
+    alert("Copied to clipboard: brew install --cask novitaswebworks/tap/appguard");
   };
 
   const triggerDownload = () => {
@@ -487,7 +487,7 @@ export default function HomePage() {
               <span className="badge">CLI Package</span>
               <p>
                 Install and update automatically via your terminal with a single command:{" "}
-                <code>brew install appguard</code>.
+                <code style={{ fontSize: "11px", wordBreak: "break-all" }}>brew install --cask novitaswebworks/tap/appguard</code>.
               </p>
               <button className="card-action" onClick={copyBrew}>
                 Copy Brew Command ↗

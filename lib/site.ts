@@ -21,6 +21,7 @@ export const DOWNLOADS = {
     available: true,
   },
   homebrew: {
-    command: "brew install appguard",
+    command: "brew install --cask novitaswebworks/tap/appguard",
+    tapCommand: "brew tap novitaswebworks/tap && brew install --cask appguard",
   },
 } as const;
