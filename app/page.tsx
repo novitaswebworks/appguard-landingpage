@@ -102,8 +102,48 @@ export default function HomePage() {
     alert("AppGuard v0.4.0 universal installer downloaded.");
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "AppGuard",
+    description: "Instant Touch ID biometric protection for macOS applications, AES-256 encrypted folder vault, sleep-lock defense, and zero-telemetry local security.",
+    applicationCategory: "SecurityApplication",
+    applicationSubCategory: "Privacy & Biometric Access Control",
+    operatingSystem: "macOS 12.0+",
+    softwareVersion: "0.4.0",
+    downloadUrl: "https://github.com/novitaswebworks/appguard/releases",
+    url: "https://appguard.novitasweb.works",
+    screenshot: "https://appguard.novitasweb.works/assets/hero.webp",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    author: {
+      "@type": "Organization",
+      name: "Novitas Web Works",
+      url: "https://novitasweb.works",
+    },
+    featureList: [
+      "Per-App Touch ID Biometric Gate",
+      "Apple Secure Enclave Hardware Integration",
+      "AES-256 Hardware Encrypted Folder Vault",
+      "Lock-on-Sleep and Screensaver Detection",
+      "Tamper-Resistant Background Watchdog Daemon",
+      "SHA-256 Salted Master PIN Fallback",
+      "Zero Cloud Telemetry Guarantee",
+      "Native Apple Silicon (ARM64) & Intel Builds",
+    ],
+  };
+
   return (
     <>
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <a
         href="#solutions"
         style={{ position: "absolute", left: "-9999px" }}
