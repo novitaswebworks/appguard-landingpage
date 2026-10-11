@@ -143,14 +143,17 @@ export default function HomePage() {
       url: "https://novitasweb.works",
     },
     featureList: [
-      "Cross-Platform Biometric App Intercept",
+      "Cross-Platform Biometric App Intercept (< 5ms)",
       "Touch ID & Apple Watch Integration (macOS)",
       "Windows Hello Facial & Fingerprint Auth (Windows 10/11)",
       "Linux PAM & fprintd Biometrics (X11 & Wayland)",
-      "AES-256 Hardware Encrypted Folder Vault",
+      "Argon2id Master PIN KDF & Brute-Force Rate Limiting",
+      "Single-Use Replay-Proof Auth Tickets (15s Window)",
+      "Compact Floating Auth Window (Non-Intrusive Prompt)",
+      "Emergency Recovery Key Safeguard (AG-XXXX-XXXX-XXXX)",
+      "Hardware-Accelerated AES-256-GCM Folder Vault",
+      "Tamper-Evident Local Security & Activity Audit Log",
       "Lock-on-Sleep and Idle Session Security",
-      "Tamper-Resistant Background Watchdog Daemon",
-      "SHA-256 Salted Master PIN Fallback",
       "Zero Cloud Telemetry Guarantee",
     ],
   };
@@ -322,11 +325,11 @@ export default function HomePage() {
           </div>
           <div className="console reveal">
             <div>
-              <h3>BIOMETRIC SENSOR → HARDWARE ENCLAVE → VAULT UNLOCKED</h3>
+              <h3>BIOMETRIC SENSOR → ARGON2ID &amp; OS KEYSTORE → SINGLE-USE TICKET</h3>
               <p id="demo-status" role="status">
                 {nodesActive
-                  ? "Sensor handshake verified → Hardware keystore validated → Protected apps unlocked. Session active."
-                  : "System idle · Awaiting biometric handshake or PIN passkey."}
+                  ? "Sensor verified → Replay-proof auth ticket issued (15s TTL) → Target app uncloaked. Activity logged."
+                  : "Watchdog active · Standby for Touch ID, Hello, PAM or Argon2id PIN."}
               </p>
               <button
                 className="demo-btn"
@@ -336,16 +339,16 @@ export default function HomePage() {
                 Simulate Biometric Auth ↗
               </button>
               <p style={{ marginTop: "12px", fontSize: "11px" }}>
-                Touch ID / Windows Hello / PAM emulation · No telemetry recorded
+                Touch ID / Windows Hello / PAM emulation · Single-use auth token · Zero cloud transmission
               </p>
             </div>
             <div
               className={`nodes ${nodesActive ? "on" : ""}`}
               aria-label="AppGuard biometric verification flow"
             >
-              <span>AUTH</span>
-              <span>KEYSTORE</span>
-              <span>UNLOCKED</span>
+              <span>SENSOR</span>
+              <span>ARGON2ID</span>
+              <span>TICKET</span>
             </div>
           </div>
         </section>
@@ -369,48 +372,64 @@ export default function HomePage() {
               <span className="f-tag">MULTI-BIOMETRIC</span>
               <h3>Touch ID, Hello &amp; PAM</h3>
               <p>
-                Native hardware support: Apple Secure Enclave Touch ID, Windows Hello facial &amp; fingerprint
-                sensors, and Linux fprintd / PAM credential prompts.
+                Direct hardware hooks into Apple LocalAuthentication (Touch ID / Apple Watch), Windows Hello
+                UserConsentVerifier, and Linux PAM / fprintd biometrics.
+              </p>
+            </div>
+            <div className="feature-card">
+              <span className="f-tag">CRYPTO ENGINE</span>
+              <h3>Argon2id Master PIN &amp; Lockout</h3>
+              <p>
+                Upgraded from SHA-256 to memory-hard Argon2id key derivation with cryptographic salt, exponential
+                rate limiting, and automatic temporary lockout on failed attempts.
+              </p>
+            </div>
+            <div className="feature-card">
+              <span className="f-tag">SEAMLESS UX</span>
+              <h3>Compact Floating Auth Panel</h3>
+              <p>
+                Watchdog triggers display a discrete floating auth window right over the intercepted app—sparing
+                your workflow from full dashboard interruptions.
+              </p>
+            </div>
+            <div className="feature-card">
+              <span className="f-tag">AUTH BOUNDARY</span>
+              <h3>Single-Use Auth Tickets (15s)</h3>
+              <p>
+                Cryptographic single-use verification tokens enforce a strict 15-second consumption window,
+                preventing replay attacks and unauthorized background unlocks.
               </p>
             </div>
             <div className="feature-card">
               <span className="f-tag">STORAGE</span>
-              <h3>Hardware AES-256 Vault</h3>
+              <h3>Hardware AES-256-GCM Vault</h3>
               <p>
-                Military-grade AES-GCM encryption cloaks sensitive folders until authorized. Files remain
-                completely encrypted at rest across all file systems.
-              </p>
-            </div>
-            <div className="feature-card">
-              <span className="f-tag">BACKGROUND</span>
-              <h3>Tamper-Proof Watchdog</h3>
-              <p>
-                Runs as a persistent background daemon with automatic recovery hooks (launchd, Windows Service,
-                systemd) to prevent unauthorized process termination.
-              </p>
-            </div>
-            <div className="feature-card">
-              <span className="f-tag">PRIVACY</span>
-              <h3>Lock-on-Sleep &amp; Screensaver</h3>
-              <p>
-                Monitors OS power and session events to lock applications immediately the millisecond your machine
-                sleeps or your screensaver engages.
+                Military-grade AES-256-GCM encryption with 96-bit OsRng nonces cloaks private repositories and
+                credentials. Fully encrypted at rest across all disks.
               </p>
             </div>
             <div className="feature-card">
               <span className="f-tag">FAILSAFE</span>
-              <h3>Master PIN Fallback</h3>
+              <h3>Emergency Recovery Key</h3>
               <p>
-                SHA-256 salted PIN safeguard ensures you never lose access when external displays are connected
-                or biometrics are temporarily unavailable.
+                Single-use 16-character recovery key (<code>AG-XXXX-XXXX-XXXX</code>) hashed with Argon2id guarantees
+                safe configuration recovery if biometrics and PIN are lost.
               </p>
             </div>
             <div className="feature-card">
-              <span className="f-tag">WORKFLOW</span>
-              <h3>Smart Grace Timers</h3>
+              <span className="f-tag">AUDIT TRAIL</span>
+              <h3>Local Activity Security Log</h3>
               <p>
-                Configurable unlock grace periods (30s to 15m) so you stay in flow during rapid app switching
-                without repeated prompts.
+                Persistent, tamper-evident local FIFO audit trail records all lock, unlock, PIN change, and security
+                events directly on-device without cloud telemetry.
+              </p>
+            </div>
+            <div className="feature-card">
+              <span className="f-tag">SESSION DEFENSE</span>
+              <h3>Lock-on-Sleep &amp; Grace Timers</h3>
+              <p>
+                Instant auto-arming when your laptop closes, display sleeps, or screensaver activates, paired with
+                customizable unlock grace timers for rapid app switching.
               </p>
             </div>
           </div>
@@ -582,9 +601,27 @@ export default function HomePage() {
               </div>
             </details>
             <details className="faq-item">
-              <summary className="faq-summary">Which biometric authentication methods are supported?</summary>
+              <summary className="faq-summary">Which biometric and authentication methods are supported?</summary>
               <div className="faq-body">
-                On macOS, AppGuard uses Touch ID and Apple Watch via LocalAuthentication. On Windows, it integrates with Windows Hello (fingerprint, facial recognition, and PIN) via UserConsentVerifier. On Linux, it supports PAM and fprintd. A salted SHA-256 Master PIN fallback is always available across all platforms.
+                On macOS, AppGuard integrates with Touch ID and Apple Watch via LocalAuthentication. On Windows, it integrates with Windows Hello (fingerprint, facial recognition, and PIN) via UserConsentVerifier. On Linux, it uses PAM and fprintd. When biometrics are unavailable or on clamshell mode, a memory-hard <strong>Argon2id salted Master PIN</strong> is used with automated rate limiting and brute-force lockout protection.
+              </div>
+            </details>
+            <details className="faq-item">
+              <summary className="faq-summary">What happens if I forget my Master PIN or biometrics fail?</summary>
+              <div className="faq-body">
+                AppGuard provides a single-use 16-character <strong>Emergency Recovery Key</strong> (<code>AG-XXXX-XXXX-XXXX</code>) generated at setup and hashed locally with Argon2id. Entering this recovery key allows you to reset your Master PIN without destroying your vault or losing your protected application configurations.
+              </div>
+            </details>
+            <details className="faq-item">
+              <summary className="faq-summary">How does AppGuard protect against replay attacks and brute-force attempts?</summary>
+              <div className="faq-body">
+                Every successful authentication generates a <strong>single-use verification ticket with a strict 15-second lifespan</strong>. An unlock command cannot be replayed or triggered externally without consuming this fresh ticket. Additionally, repeated failed PIN attempts trigger exponential rate limiting and temporary lockout cooldown timers.
+              </div>
+            </details>
+            <details className="faq-item">
+              <summary className="faq-summary">Does unlocking an app interrupt my workflow with the main dashboard?</summary>
+              <div className="faq-body">
+                No. In v0.6.0+, AppGuard launches a discrete <strong>compact floating auth window</strong> directly above the intercepted app. You authenticate via fingerprint, face, or PIN in under 5 seconds, and the floating panel immediately dismisses itself—your main dashboard remains completely hidden in the background tray.
               </div>
             </details>
             <details className="faq-item">
@@ -596,7 +633,7 @@ export default function HomePage() {
             <details className="faq-item">
               <summary className="faq-summary">Can someone bypass AppGuard by force-quitting the app in Task Manager or Activity Monitor?</summary>
               <div className="faq-body">
-                AppGuard features built-in tamper protection. The core watchdog daemon integrates with system-level supervisor hooks (launchd KeepAlive on macOS, Windows Service AutoRestart, and systemd on Linux). If the daemon is interrupted, locked applications are immediately minimized, cloaked, or terminated.
+                AppGuard features built-in tamper protection. The core watchdog daemon integrates with system-level supervisor hooks (launchd KeepAlive on macOS, Windows Service AutoRestart, and systemd on Linux). If the daemon is interrupted, locked applications are immediately minimized, cloaked, or terminated, and all events are recorded in the local tamper-evident activity log.
               </div>
             </details>
             <details className="faq-item">
