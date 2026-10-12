@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { SITE, VERSION } from "@/lib/site";
+import { DOWNLOADS, SITE, VERSION } from "@/lib/site";
 
 export default function HomePage() {
   const [paused, setPaused] = useState(false);
@@ -104,19 +104,26 @@ export default function HomePage() {
     });
   };
 
+  const [copyFeedback, setCopyFeedback] = useState(false);
+
   const copyBrew = () => {
-    navigator.clipboard.writeText("brew install --cask novitaswebworks/tap/appguard");
-    alert("Copied to clipboard: brew install --cask novitaswebworks/tap/appguard");
+    navigator.clipboard.writeText(DOWNLOADS.homebrew.command);
+    setCopyFeedback(true);
+    setTimeout(() => setCopyFeedback(false), 3000);
   };
 
   const triggerDownload = (os: "macos" | "windows" | "linux" = selectedPlatform) => {
     setDialogOpen(false);
-    const filenames = {
-      macos: `AppGuard_${VERSION}_universal.dmg`,
-      windows: `AppGuard_${VERSION}_x64-setup.exe`,
-      linux: `AppGuard_${VERSION}_amd64.AppImage`,
-    };
-    alert(`AppGuard v${VERSION} (${filenames[os]}) download initiated.`);
+    const targetUrl = DOWNLOADS[os].url;
+    if (typeof window !== "undefined") {
+      // Create and click an invisible link to trigger genuine browser file download
+      const link = document.createElement("a");
+      link.href = targetUrl;
+      link.setAttribute("download", DOWNLOADS[os].file);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const jsonLd = {
@@ -500,15 +507,13 @@ export default function HomePage() {
                 Native ARM64 &amp; Intel x86_64 build for macOS 12+ (Monterey, Ventura, Sonoma, Sequoia) with
                 Touch ID &amp; Apple Watch verification.
               </p>
-              <button
+              <a
                 className="card-action"
-                onClick={() => {
-                  setSelectedPlatform("macos");
-                  setDialogOpen(true);
-                }}
+                href={DOWNLOADS.macos.url}
+                download={DOWNLOADS.macos.file}
               >
                 Download for macOS (.dmg) ↗
-              </button>
+              </a>
             </div>
             <div className="platform-card">
               <b>Windows</b>
@@ -517,15 +522,13 @@ export default function HomePage() {
                 Full Windows 10 &amp; 11 support with Windows Hello facial recognition, fingerprint sensor,
                 and Credential Manager integration.
               </p>
-              <button
+              <a
                 className="card-action"
-                onClick={() => {
-                  setSelectedPlatform("windows");
-                  setDialogOpen(true);
-                }}
+                href={DOWNLOADS.windows.url}
+                download={DOWNLOADS.windows.file}
               >
                 Download for Windows (.exe) ↗
-              </button>
+              </a>
             </div>
             <div className="platform-card">
               <b>Linux</b>
@@ -534,15 +537,13 @@ export default function HomePage() {
                 Compatible with Ubuntu, Debian, Fedora, Arch &amp; all major distros across X11 and Wayland
                 with PAM &amp; fprintd authentication.
               </p>
-              <button
+              <a
                 className="card-action"
-                onClick={() => {
-                  setSelectedPlatform("linux");
-                  setDialogOpen(true);
-                }}
+                href={DOWNLOADS.linux.url}
+                download={DOWNLOADS.linux.file}
               >
                 Download for Linux (.AppImage) ↗
-              </button>
+              </a>
             </div>
           </div>
 
@@ -564,11 +565,11 @@ export default function HomePage() {
             <div>
               <b style={{ fontSize: "14px", fontFamily: "Georgia, serif" }}>Prefer Homebrew on macOS?</b>
               <p style={{ margin: "4px 0 0", fontSize: "12px", color: "var(--muted)", fontFamily: "monospace" }}>
-                brew install --cask novitaswebworks/tap/appguard
+                {DOWNLOADS.homebrew.command}
               </p>
             </div>
             <button className="card-action" onClick={copyBrew}>
-              Copy Brew Command ↗
+              {copyFeedback ? "✓ Copied to Clipboard!" : "Copy Brew Command ↗"}
             </button>
           </div>
         </section>
@@ -781,9 +782,14 @@ export default function HomePage() {
             <strong>Security:</strong> Touch ID, Windows Hello &amp; PAM · 100% Local-First
           </div>
           <div className="dialog-actions">
-            <button className="pill solid" onClick={() => triggerDownload(selectedPlatform)}>
+            <a
+              className="pill solid"
+              href={DOWNLOADS[selectedPlatform].url}
+              download={DOWNLOADS[selectedPlatform].file}
+              onClick={() => setDialogOpen(false)}
+            >
               Download for {selectedPlatform === "macos" ? "macOS (.dmg)" : selectedPlatform === "windows" ? "Windows (.exe)" : "Linux (.AppImage)"} ↗
-            </button>
+            </a>
             <button className="text-link" onClick={() => setDialogOpen(false)}>
               Dismiss
             </button>
